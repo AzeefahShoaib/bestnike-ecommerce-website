@@ -25,7 +25,7 @@
         </nav>
 
        <div class="icons">
-    <i class="far fa-heart like-btn"></i>
+    <i class="far fa-heart" id="wishlist-icon"></i>
     <i class="fas fa-shopping-cart" id="cart-icon"></i>
     <i class="fas fa-user"></i>
 </div>
@@ -40,10 +40,25 @@
     <div class="cart-total">
         <strong>Total: $<span id="cart-total">0.00</span></strong>
     </div>
-
+    <button class="btn" id="checkout-btn">Checkout</button>
     <button class="btn" id="close-cart">Close Cart</button>
 </div>
+<!-- Wishlist Box -->
+<div class="wishlist-box" id="wishlist-box">
+
+    <h2>My Wishlist</h2>
+
+    <div id="wishlist-items">
+        <p>Your wishlist is empty.</p>
+    </div>
+
+    <button class="btn" id="close-wishlist">
+        Close Wishlist
+    </button>
+
+</div>
 <!-- home section starts -->
+ 
     <section class="home" id="home">
         <div class="home-slider active">
             <div class="slide">
@@ -131,7 +146,7 @@
         <h2 class="heading">Latest <span>Products</span></h2>
 
         <div class="box-container">
-            <div class="box">
+            <div class="box" data-id="4">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>
@@ -152,7 +167,7 @@
                 </div>
             </div>
 
-            <div class="box">
+             <div class="box" data-id="5">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>
@@ -173,7 +188,7 @@
                 </div>
             </div>
 
-            <div class="box">
+             <div class="box" data-id="6">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>
@@ -194,7 +209,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" data-id="4">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>
@@ -215,7 +230,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" data-id="5">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>
@@ -236,7 +251,7 @@
                 </div>
             </div>
 
-            <div class="box">
+            <div class="box" data-id="6">
                 <div class="icons">
                     <i class="far fa-heart like-btn"></i>
                     <i class="fas fa-share"></i>

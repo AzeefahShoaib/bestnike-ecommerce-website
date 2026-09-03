@@ -750,3 +750,74 @@ section{
     margin-top: 20px;
     cursor: pointer;
 }
+ 
+   WISHLIST PANEL
+ 
+
+.wishlist-box {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    padding: 80px 25px 25px;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    z-index: 10000;
+    overflow-y: auto;
+    transition: 0.4s ease;
+}
+
+.wishlist-box.active {
+    right: 0;
+}
+
+.wishlist-box h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.wishlist-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.wishlist-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
+.wishlist-item h3 {
+    font-size: 16px;
+}
+
+.wishlist-item p {
+    font-size: 15px;
+    margin: 5px 0;
+}
+
+#close-wishlist {
+    margin-top: 20px;
+    cursor: pointer;
+}
+/* WISHLIST PANEL FIX */
+
+#wishlist-box {
+    position: fixed !important;
+    top: 0 !important;
+    right: -400px !important;
+    width: 350px !important;
+    height: 100vh !important;
+    background: #fff !important;
+    padding: 80px 25px 25px !important;
+    z-index: 99999 !important;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.25) !important;
+    overflow-y: auto !important;
+    transition: right 0.4s ease !important;
+    display: block !important;
+}
+
+#wishlist-box.active {
+    right: 0 !important;
+}

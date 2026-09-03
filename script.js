@@ -69,14 +69,33 @@ document.querySelectorAll('.products .btn').forEach(button => {
 
         let price = parseFloat(productPrice.replace(/[^0-9.]/g, ''));
 
-        cart.push({
-            name: productName,
-            price: price
-        });
+        const productId = parseInt(productBox.getAttribute('data-id'));
 
-        updateCart();
+fetch('http://localhost:5000/api/cart', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        product_id: productId,
+        quantity: 1
+    })
+})
+.then(response => response.json())
+.then(data => {
 
-        alert(productName + " has been added to your cart!");
+    cart.push({
+        name: productName,
+        price: price
+    });
+
+    updateCart();
+
+    alert(productName + " has been added to your cart!");
+})
+.catch(error => {
+    console.error("Add to cart failed:", error);
+});
     });
 
 });
@@ -111,36 +130,303 @@ function updateCart() {
 
     cartTotal.innerText = total.toFixed(2);
 }
+async function loadCartFromBackend() {
+    try {
+        const response = await fetch('http://localhost:5000/api/cart');
+        const items = await response.json();
 
-function removeFromCart(index) {
+        cart = items.map(item => ({
+            cart_id: item.cart_id,
+            name: item.name,
+            price: parseFloat(item.price)
+        }));
 
-    cart.splice(index, 1);
+        updateCart();
 
-    updateCart();
+        console.log("Cart loaded from database:", items);
+
+    } catch (error) {
+        console.error("Failed to load cart:", error);
+    }
 }
 
-cartIcon.addEventListener('click', () => {
-    cartBox.classList.add('active');
-});
+loadCartFromBackend();
+ function removeFromCart(index) {
 
-closeCart.addEventListener('click', () => {
-    cartBox.classList.remove('active');
-});
+    const cartId = cart[index].cart_id;
+
+    fetch(`http://localhost:5000/api/cart/${cartId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        console.log("Remove response:", data);
+
+        cart.splice(index, 1);
+
+        updateCart();
+
+        alert("Item removed from cart!");
+
+    })
+    .catch(error => {
+        console.error("Remove from cart failed:", error);
+    });
+}
 // Like / Wishlist functionality
 
-document.querySelectorAll('.like-btn').forEach(button => {
+ const latestProductIds = [4, 5, 6, 4, 5, 6];
 
-    button.addEventListener('click', function() {
+document.querySelectorAll('.products .btn').forEach((button, index) => {
 
-        this.classList.toggle('fas');
-        this.classList.toggle('far');
+    button.addEventListener('click', function(event) {
 
+        event.preventDefault();
+
+        let productBox = this.closest('.box');
+
+        let productName = productBox.querySelector('h3').innerText;
+        let productPrice = productBox.querySelector('.prices').innerText;
+
+        let priceMatch = productPrice.match(/\d+(\.\d+)?/);
+        let price = priceMatch ? parseFloat(priceMatch[0]) : 0;
+
+        // Database product ID
+        const productId = latestProductIds[index];
+
+        console.log("Sending Product ID:", productId);
+
+        fetch('http://localhost:5000/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            console.log("Backend response:", data);
+
+            cart.push({
+                name: productName,
+                price: price
+            });
+
+            updateCart();
+
+            alert(productName + " has been added to your cart!");
+        })
+        .catch(error => {
+            console.error("Add to cart failed:", error);
+        });
+
+    });
+
+});
+
+// CONNECT FRONTEND WITH BACKEND
+ 
+
+async function loadProductsFromBackend() {
+    try {
+        const response = await fetch('http://localhost:5000/api/products');
+        const products = await response.json();
+
+        console.log("Products received from MySQL:");
+        console.log(products);
+
+        // Get only Home products
+        const homeProducts = products.filter(product =>
+            product.category === "Home"
+        );
+
+        const homeSlides = document.querySelectorAll('.home-slider');
+
+        homeSlides.forEach((slide, index) => {
+
+            if (homeProducts[index]) {
+
+                const product = homeProducts[index];
+
+                const productTitle = slide.querySelector('span');
+
+                if (productTitle) {
+                    productTitle.innerText = product.name;
+                }
+
+            }
+
+        });
+
+    } catch (error) {
+        console.error("Backend connection failed:", error);
+    }
+}
+
+loadProductsFromBackend();
+// CART OPEN/CLOSE FIX
+
+const cartIconFix = document.querySelector('#cart-icon');
+const cartBoxFix = document.querySelector('#cart-box');
+const closeCartFix = document.querySelector('#close-cart');
+
+if (cartIconFix && cartBoxFix) {
+    cartIconFix.addEventListener('click', function () {
+        cartBoxFix.classList.add('active');
+        console.log("Cart opened");
+    });
+}
+
+if (closeCartFix && cartBoxFix) {
+    closeCartFix.addEventListener('click', function () {
+        cartBoxFix.classList.remove('active');
+        console.log("Cart closed");
+    });
+}
+
+// WISHLIST BACKEND
+
+const wishlistProductIds = [4, 5, 6, 4, 5, 6];
+
+document.querySelectorAll('.like-btn').forEach((button, index) => {
+
+    button.addEventListener('click', function(event) {
+
+        event.preventDefault();
+
+        const productId = wishlistProductIds[index];
+
+        // If heart is already filled, remove from wishlist
         if (this.classList.contains('fas')) {
-            alert('Product added to your wishlist!');
-        } else {
-            alert('Product removed from your wishlist!');
+
+            fetch(`http://localhost:5000/api/wishlist/${productId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log("Wishlist remove response:", data);
+
+                this.classList.remove('fas');
+                this.classList.add('far');
+
+                alert('Product removed from wishlist!');
+            })
+            .catch(error => {
+                console.error("Wishlist remove failed:", error);
+            });
+
+        }
+
+        // Otherwise add to wishlist
+        else {
+
+            fetch('http://localhost:5000/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log("Wishlist add response:", data);
+
+                this.classList.remove('far');
+                this.classList.add('fas');
+
+                alert('Product added to wishlist!');
+            })
+            .catch(error => {
+                console.error("Wishlist add failed:", error);
+            });
+
         }
 
     });
 
+});
+// ===============================
+// WISHLIST PANEL OPEN / CLOSE
+// ===============================
+
+const wishlistIcon = document.querySelector('#wishlist-icon');
+const wishlistBox = document.querySelector('#wishlist-box');
+const closeWishlist = document.querySelector('#close-wishlist');
+const wishlistItems = document.querySelector('#wishlist-items');
+
+wishlistIcon.addEventListener('click', async () => {
+
+    wishlistBox.classList.add('active');
+
+    try {
+        const response = await fetch('http://localhost:5000/api/wishlist');
+        const items = await response.json();
+
+        wishlistItems.innerHTML = '';
+
+        if (items.length === 0) {
+            wishlistItems.innerHTML = '<p>Your wishlist is empty.</p>';
+            return;
+        }
+
+        items.forEach(item => {
+
+            wishlistItems.innerHTML += `
+                <div class="wishlist-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>$${parseFloat(item.price).toFixed(2)}</p>
+                </div>
+            `;
+        });
+
+        console.log("Wishlist loaded:", items);
+
+    } catch (error) {
+        console.error("Failed to load wishlist:", error);
+    }
+
+});
+
+closeWishlist.addEventListener('click', () => {
+    wishlistBox.classList.remove('active');
+});
+const checkoutBtn = document.querySelector('#checkout-btn');
+
+checkoutBtn.addEventListener('click', async () => {
+console.log("Checkout button clicked");
+    try {
+        const response = await fetch('http://localhost:5000/api/checkout', {
+            method: 'POST'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message);
+            return;
+        }
+
+        alert(
+            `Order placed successfully!\nOrder ID: ${data.orderId}\nTotal: $${data.total}`
+        );
+
+        cart = [];
+        updateCart();
+
+        document.querySelector('#cart-box').classList.remove('active');
+
+    } catch (error) {
+        console.error("Checkout failed:", error);
+        alert("Checkout failed.");
+    }
 });
