@@ -71,7 +71,7 @@ document.querySelectorAll('.products .btn').forEach(button => {
 
         const productId = parseInt(productBox.getAttribute('data-id'));
 
-fetch('http://localhost:5000/api/cart', {
+fetch('https://bestnike-ecommerce-website-production.up.railway.app/api/cart', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -132,7 +132,7 @@ function updateCart() {
 }
 async function loadCartFromBackend() {
     try {
-        const response = await fetch('http://localhost:5000/api/cart');
+        const response = await fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/cart');
         const items = await response.json();
 
         cart = items.map(item => ({
@@ -155,7 +155,7 @@ loadCartFromBackend();
 
     const cartId = cart[index].cart_id;
 
-    fetch(`http://localhost:5000/api/cart/${cartId}`, {
+    fetch(` https://bestnike-ecommerce-website-production.up.railway.app/api/cart/${cartId}`, {
         method: 'DELETE'
     })
     .then(response => response.json())
@@ -197,7 +197,7 @@ document.querySelectorAll('.products .btn').forEach((button, index) => {
 
         console.log("Sending Product ID:", productId);
 
-        fetch('http://localhost:5000/api/cart', {
+        fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -234,7 +234,7 @@ document.querySelectorAll('.products .btn').forEach((button, index) => {
 
 async function loadProductsFromBackend() {
     try {
-        const response = await fetch('http://localhost:5000/api/products');
+        const response = await fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/products');
         const products = await response.json();
 
         console.log("Products received from MySQL:");
@@ -304,7 +304,7 @@ document.querySelectorAll('.like-btn').forEach((button, index) => {
         // If heart is already filled, remove from wishlist
         if (this.classList.contains('fas')) {
 
-            fetch(`http://localhost:5000/api/wishlist/${productId}`, {
+            fetch(` https://bestnike-ecommerce-website-production.up.railway.app/api/wishlist/${productId}`, {
                 method: 'DELETE'
             })
             .then(response => response.json())
@@ -326,7 +326,7 @@ document.querySelectorAll('.like-btn').forEach((button, index) => {
         // Otherwise add to wishlist
         else {
 
-            fetch('http://localhost:5000/api/wishlist', {
+            fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/wishlist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -368,7 +368,7 @@ wishlistIcon.addEventListener('click', async () => {
     wishlistBox.classList.add('active');
 
     try {
-        const response = await fetch('http://localhost:5000/api/wishlist');
+        const response = await fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/wishlist');
         const items = await response.json();
 
         wishlistItems.innerHTML = '';
@@ -405,7 +405,7 @@ const checkoutBtn = document.querySelector('#checkout-btn');
 checkoutBtn.addEventListener('click', async () => {
 console.log("Checkout button clicked");
     try {
-        const response = await fetch('http://localhost:5000/api/checkout', {
+        const response = await fetch(' https://bestnike-ecommerce-website-production.up.railway.app/api/checkout', {
             method: 'POST'
         });
 
